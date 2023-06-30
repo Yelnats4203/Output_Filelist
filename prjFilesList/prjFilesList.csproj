@@ -11,4 +11,9 @@
     <PackageReference Include="NPOI" Version="2.6.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Controllers\" />
+    <Folder Include="Models\" />
+  </ItemGroup>
+
 </Project>

@@ -4,13 +4,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace prjFilesList.Models
+namespace prjFilesList
 {
-    public class CTabData
+    public class CSheetData
     {
-        public string tabName { get; set; } = "tab";
+        public string sheetName { get; set; } = "tab";
         public List<CFileData> fileDatas { get; set; } = new List<CFileData>();
 
-        public int fileCount { get; set; } = 0; 
+        public int fileCount { get; set; } = 0;
     }
 }
