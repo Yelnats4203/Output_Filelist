@@ -8,12 +8,12 @@ namespace prjFilesList
 {
     public class CFileData
     {
-        public string type { get; set; } = "";
-        public string fileName { get; set; } = "";
+        public string Type { get; set; } = "";
+        public string FileName { get; set; } = "";
 
-        public string zipFolderName { get; set; } = "";
+        public string ZipFolderName { get; set; } = "";
 
-        public string fileFullPath { get; set; } = "";
+        public string FileFullPath { get; set; } = "";
 
     }
 }

@@ -8,9 +8,9 @@ namespace prjFilesList
 {
     public class CSheetData
     {
-        public string sheetName { get; set; } = "tab";
-        public List<CFileData> fileDatas { get; set; } = new List<CFileData>();
+        public string SheetName { get; set; } = "sheet";
+        public List<CFileData> FileDatas { get; set; } = new List<CFileData>();
 
-        public int fileCount { get; set; } = 0;
+        public int FileCount { get; set; } = 0;
     }
 }

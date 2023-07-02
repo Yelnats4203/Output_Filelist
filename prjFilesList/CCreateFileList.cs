@@ -1,5 +1,4 @@
-﻿using Org.BouncyCastle.Math.EC;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -10,34 +9,34 @@ namespace prjFilesList
 {
     public class CCreateFileList
     {
-        private string[] _sheetNames { get; }
-        private string _folderPath { get; }
-        private string _outputPath { get; }
+        private string[] _SheetNames { get; }
+        private string _FolderPath { get; }
+        private string _OutputPath { get; }
 
-        private string[] _columns { get; }
+        private string[] _Columns { get; }
 
         private List<CSheetData> datas = new List<CSheetData>();
         public CCreateFileList()
         {
-            _sheetNames = new string[4] { "ADMIN", "API", "BATCH", "SFTP" };
-            _folderPath = "D:\\作業\\進管程式清單小作業\\進管\\";
-            _outputPath = "S:\\進管\\";
-            _columns = new string[4] { "異動類型", "程式名稱", "附件zip檔案解壓縮後資料夾名稱", "目的程式路徑" };
-            createDataList();
-            createListFile();
+            _SheetNames = new string[4] { "ADMIN", "API", "BATCH", "SFTP" };
+            _FolderPath = @"D:\作業\進管程式清單小作業\進管\";
+            _OutputPath = @"S:\進管\";
+            _Columns = new string[4] { "異動類型", "程式名稱", "附件zip檔案解壓縮後資料夾名稱", "目的程式路徑" };
+            CreateDataList();
+            CreateListFile();
         }
 
         //取得檔案清單
-        public void createDataList()
+        public void CreateDataList()
         {
-            foreach (string sheet in _sheetNames)
+            foreach (string sheet in _SheetNames)
             {
-                DirectoryInfo tabInfo = new DirectoryInfo(_folderPath + sheet);
+                DirectoryInfo tabInfo = new DirectoryInfo(_FolderPath + sheet);
                 FileInfo[] rowFiles = tabInfo.GetFiles("*", SearchOption.AllDirectories);
                 CSheetData sheetData = new CSheetData()
                 {
-                    sheetName = sheet,
-                    fileCount = rowFiles.Count(),
+                    SheetName = sheet,
+                    FileCount = rowFiles.Count(),
                 };
                 if (rowFiles.Count() != 0)
                 {
@@ -47,12 +46,12 @@ namespace prjFilesList
                     {
                         CFileData fileData = new CFileData()
                         {
-                            type = "新增",
-                            fileName = file.Name,
-                            zipFolderName = "",
-                            fileFullPath = file.FullName.Replace(_folderPath, _outputPath),   //將原檔案路徑改為輸出的目的路徑
+                            Type = "新增",
+                            FileName = file.Name,
+                            ZipFolderName = "",
+                            FileFullPath = file.FullName.Replace(_FolderPath, _OutputPath),   //將原檔案路徑改為輸出的目的路徑
                         };
-                        sheetData.fileDatas.Add(fileData);
+                        sheetData.FileDatas.Add(fileData);
                         Console.WriteLine(file.FullName);
                     }
                 }
@@ -60,39 +59,39 @@ namespace prjFilesList
             }
         }
         //匯出成excel
-        public void createListFile()
+        public void CreateListFile()
         {
             XSSFWorkbook workbook = new XSSFWorkbook();
             foreach (var sheetData in datas)
             {
                 
-                var sheet = workbook.CreateSheet(sheetData.sheetName);
+                var sheet = workbook.CreateSheet(sheetData.SheetName);
 
                 //header
                 var header = sheet.CreateRow(0);
-                for (int i = 0; i < _columns.Length; i++)
+                for (int i = 0; i < _Columns.Length; i++)
                 {
-                    header.CreateCell(i).SetCellValue(_columns[i]);
+                    header.CreateCell(i).SetCellValue(_Columns[i]);
                 }
 
                 //data body
-                for (int i = 0; i < sheetData.fileCount; i++)
+                for (int i = 0; i < sheetData.FileCount; i++)
                 {
                     var fileRow = sheet.CreateRow(i + 1);
-                    fileRow.CreateCell(0).SetCellValue(sheetData.fileDatas[i].type);
-                    fileRow.CreateCell(1).SetCellValue(sheetData.fileDatas[i].fileName);
+                    fileRow.CreateCell(0).SetCellValue(sheetData.FileDatas[i].Type);
+                    fileRow.CreateCell(1).SetCellValue(sheetData.FileDatas[i].FileName);
                     fileRow.CreateCell(2).SetCellValue("");
-                    fileRow.CreateCell(3).SetCellValue(sheetData.fileDatas[i].fileFullPath);
+                    fileRow.CreateCell(3).SetCellValue(sheetData.FileDatas[i].FileFullPath);
                 }
 
                 //file count
                 var fileCount = sheet.CreateRow(sheet.LastRowNum + 1);
-                fileCount.CreateCell(_columns.Length - 1).SetCellValue($"程式數量：{sheetData.fileCount}");
+                fileCount.CreateCell(_Columns.Length - 1).SetCellValue($"程式數量：{sheetData.FileCount}");
 
             }
 
             //create excel file
-            using (var fileStream = File.Create(_folderPath + "(作業)檔案清單.xlsx"))
+            using (var fileStream = File.Create(_FolderPath + "(作業)檔案清單.xlsx"))
             {
                 workbook.Write(fileStream);
             }
