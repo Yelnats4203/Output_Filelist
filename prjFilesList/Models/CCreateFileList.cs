@@ -3,9 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using NPOI.SS;
 using NPOI.XSSF.UserModel;
 
-namespace prjFilesList
+namespace prjFilesList.Models
 {
     public class CCreateFileList
     {
@@ -24,8 +25,14 @@ namespace prjFilesList
             _Columns = new string[4] { "異動類型", "程式名稱", "附件zip檔案解壓縮後資料夾名稱", "目的程式路徑" };
         }
 
+        public void Run()
+        {
+            CreateDataList();
+            CreateListFile();
+        }
+
         //取得檔案清單
-        public void CreateDataList()
+        private void CreateDataList()
         {
             foreach (string sheet in _SheetNames)
             {
@@ -57,7 +64,7 @@ namespace prjFilesList
             }
         }
         //匯出成excel
-        public void CreateListFile()
+        private void CreateListFile()
         {
             if (Datas.Count() == 0)
             {
@@ -67,15 +74,16 @@ namespace prjFilesList
             XSSFWorkbook workbook = new XSSFWorkbook();
             foreach (var sheetData in Datas)
             {
-                
+
                 var sheet = workbook.CreateSheet(sheetData.SheetName);
 
                 //header
                 var header = sheet.CreateRow(0);
-                for (int i = 0; i < _Columns.Length; i++)
-                {
-                    header.CreateCell(i).SetCellValue(_Columns[i]);
-                }
+                CFileData file = new CFileData();
+                header.CreateCell(0).SetCellValue(file.GetDisplayName(nameof(file.Type)));
+                header.CreateCell(1).SetCellValue(file.GetDisplayName(nameof(file.FileName)));
+                header.CreateCell(2).SetCellValue(file.GetDisplayName(nameof(file.ZipFolderName)));
+                header.CreateCell(3).SetCellValue(file.GetDisplayName(nameof(file.FileFullPath)));
 
                 //data body
                 for (int i = 0; i < sheetData.FileCount; i++)
