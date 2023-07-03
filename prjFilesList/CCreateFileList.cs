@@ -9,21 +9,19 @@ namespace prjFilesList
 {
     public class CCreateFileList
     {
-        private string[] _SheetNames { get; }
+        private List<string> _SheetNames { get; }
         private string _FolderPath { get; }
-        private string _OutputPath { get; }
+        private string _TargetPath { get; }
 
         private string[] _Columns { get; }
 
-        private List<CSheetData> datas = new List<CSheetData>();
-        public CCreateFileList()
+        private List<CSheetData> Datas = new List<CSheetData>();
+        public CCreateFileList(List<string> sheetNames, string inputFolderPath, string targetPath)
         {
-            _SheetNames = new string[4] { "ADMIN", "API", "BATCH", "SFTP" };
-            _FolderPath = @"D:\作業\進管程式清單小作業\進管\";
-            _OutputPath = @"S:\進管\";
+            _SheetNames = sheetNames;
+            _FolderPath = inputFolderPath;
+            _TargetPath = targetPath;
             _Columns = new string[4] { "異動類型", "程式名稱", "附件zip檔案解壓縮後資料夾名稱", "目的程式路徑" };
-            CreateDataList();
-            CreateListFile();
         }
 
         //取得檔案清單
@@ -31,8 +29,8 @@ namespace prjFilesList
         {
             foreach (string sheet in _SheetNames)
             {
-                DirectoryInfo tabInfo = new DirectoryInfo(_FolderPath + sheet);
-                FileInfo[] rowFiles = tabInfo.GetFiles("*", SearchOption.AllDirectories);
+                DirectoryInfo directoryInfo = new DirectoryInfo(_FolderPath + sheet);
+                FileInfo[] rowFiles = directoryInfo.GetFiles("*", SearchOption.AllDirectories);
                 CSheetData sheetData = new CSheetData()
                 {
                     SheetName = sheet,
@@ -49,20 +47,25 @@ namespace prjFilesList
                             Type = "新增",
                             FileName = file.Name,
                             ZipFolderName = "",
-                            FileFullPath = file.FullName.Replace(_FolderPath, _OutputPath),   //將原檔案路徑改為輸出的目的路徑
+                            FileFullPath = file.FullName.Replace(_FolderPath, _TargetPath),   //將原檔案路徑改為輸出的目的路徑
                         };
                         sheetData.FileDatas.Add(fileData);
                         Console.WriteLine(file.FullName);
                     }
                 }
-                datas.Add(sheetData);
+                Datas.Add(sheetData);
             }
         }
         //匯出成excel
         public void CreateListFile()
         {
+            if (Datas.Count() == 0)
+            {
+                Console.WriteLine("目標資料夾無檔案");
+                Console.ReadLine();
+            }
             XSSFWorkbook workbook = new XSSFWorkbook();
-            foreach (var sheetData in datas)
+            foreach (var sheetData in Datas)
             {
                 
                 var sheet = workbook.CreateSheet(sheetData.SheetName);
@@ -80,7 +83,7 @@ namespace prjFilesList
                     var fileRow = sheet.CreateRow(i + 1);
                     fileRow.CreateCell(0).SetCellValue(sheetData.FileDatas[i].Type);
                     fileRow.CreateCell(1).SetCellValue(sheetData.FileDatas[i].FileName);
-                    fileRow.CreateCell(2).SetCellValue("");
+                    fileRow.CreateCell(2).SetCellValue(sheetData.FileDatas[i].ZipFolderName);
                     fileRow.CreateCell(3).SetCellValue(sheetData.FileDatas[i].FileFullPath);
                 }
 
